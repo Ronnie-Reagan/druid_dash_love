@@ -1,0 +1,42 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "tilemap_1.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "tilemap_1.tmx": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 130.66666666666666,
+                "y": 166.33333333333334
+            }
+        },
+        "tilemap_1.tmx#dd_gb": {
+            "scaleInDock": 3
+        }
+    },
+    "last.exportedFilePath": "E:/gamedev/love2d/tilemap_learning/assets/mapfiles",
+    "last.imagePath": "E:/gamedev/love2d/tilemap_learning/assets/mapfiles",
+    "map.lastUsedExportFilter": "Lua files (*.lua)",
+    "map.lastUsedFormat": "tmx",
+    "openFiles": [
+        "tilemap_1.tmx"
+    ],
+    "project": "tilemap_learning_map_project.tiled-project",
+    "recentFiles": [
+        "tilemap_1.tmx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
