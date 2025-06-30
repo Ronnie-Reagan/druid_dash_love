@@ -43,13 +43,9 @@ function love.update(dt)
 			handle_player_particle()
 		end
 		
-		print("asd")
-		
 		for i=#_G.mushrooms, 1, -1 do
 			local mush = _G.mushrooms[i]
 			mush:update()
-			print(player.x.." "..player.y)
-			print(mush.x.." "..mush.y)
 			if player.x == mush.x and player.y == mush.y then
 				table.remove(_G.mushrooms, i)
 			end
@@ -59,7 +55,13 @@ function love.update(dt)
 			local particle = particle_collection[i]
 			particle:update()
 			if particle.lifetime <= 0 then
+				-- handle particles first then delete mush
+				
+				
+				
 				table.remove(particle_collection, i)
+
+
 			end
 		end
 		
