@@ -31,19 +31,27 @@ function loadTileMap(path)
     end
 
     function map:pre_proces()
+        local portal_position = {}
         for i,layer in ipairs(self.layers) do
             for y = 0, layer.height-1 do
                 for x = 0, layer.width-1 do
                     local index = (x + y*layer.width) + 1
                     local tileid = layer.data[index]
-                    if tileid == 4 then
+                    -- spawn mushrooms
+                    if tileid == const.MUSHROOM_TILE then
                         local mush = mush_handler.new(x, y)
                         table.insert(_G.mushrooms, mush)
                         layer.data[index] = 1
                     end
+                    -- set player spawn position
+                    if tileid == const.PORTAL_TILE then
+                        table.insert(portal_position, x)
+                        table.insert(portal_position, y)
+                    end
                 end
             end
         end
+        return portal_position
     end
 
     function map:draw()

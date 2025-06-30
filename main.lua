@@ -17,20 +17,22 @@ function love.load()
 	--window = {translateX = 40, translateY = 40, scale = 1, width = 1920, height = 1080}
 	--width, height = love.graphics.getDimensions ()
 	--love.window.setMode (960, 548, {resizable=true, borderless=false})
-	_G.mushrooms = {}
-	_G.map = loadTileMap(const.TILEMAP_1_PATH)
-	_G.map:pre_proces()
-
+	_G.map_index = 1
+	load_map(map_index)
 	love.keyboard.setKeyRepeat(true)
 	
 	tickPeriod = 1/60
 	accumulator = 0.0
 
-    mushroom_collection = {}
+	
+end
+
+function load_map(index)
+	_G.mushrooms = {}
+	_G.map = loadTileMap(const.TILEMAP_1_PATH..index)
+	player_positions = _G.map:pre_proces()
 	particle_collection = {}
-	local randsx = math.random()
-	local randsy = math.random()
-	player = player_hander.new(1, 1, 1)
+	player = player_hander.new(1, player_positions[1], player_positions[2])
 end
 
 function love.update(dt)
@@ -47,24 +49,37 @@ function love.update(dt)
 			local mush = _G.mushrooms[i]
 			mush:update()
 			if player.x == mush.x and player.y == mush.y then
+				-- handle particles first then delete mush
+				for i=1,10 do
+					local particle = particle_handler.new_particle(
+						mush.x * const.TILE_GRID_SIZE + const.TILE_GRID_SIZE/2,
+						mush.y * const.TILE_GRID_SIZE,
+						math.random() * helpers.random_element_from({-0.5,0.5}),
+						-math.random(2),
+						math.random(10) + 20,
+						helpers.random_element_from({color.PICO_RED, color.PICO_WHITE, color.PICO_LIGHT_PEACH}),
+						particle_handler.PARTICLE_TYPE.DOT
+					)
+					table.insert(particle_collection, particle)
+				end
+				
 				table.remove(_G.mushrooms, i)
 			end
+		end
+
+		-- change starting tile to be active portal once
+		-- number  of mushroms is zero
+		if #mushrooms == 0 then
+			_G.map:set_tile(player_positions[1], player_positions[2], const.ACTIVE_PORTAL_TILE, 1)
 		end
 
 		for i=#particle_collection, 1, -1 do
 			local particle = particle_collection[i]
 			particle:update()
 			if particle.lifetime <= 0 then
-				-- handle particles first then delete mush
-				
-				
-				
 				table.remove(particle_collection, i)
-
-
 			end
 		end
-		
 		accumulator = accumulator - tickPeriod
 	end
 end
@@ -111,7 +126,8 @@ function handle_player_particle()
 			math.random()*( particle_direction_y > 0 and particle_direction_y or -math.random()),
 			10,
 			helpers.random_element_from({4,5,19,20, 27}),
-			1)
+			particle_handler.PARTICLE_TYPE.DOT
+		)
 		table.insert(particle_collection, part)
 	end
 
@@ -123,7 +139,7 @@ function handle_player_particle()
 			0,
 			20,
 			helpers.random_element_from({19}),
-			1
+			particle_handler.PARTICLE_TYPE.DOT
 		)
 	local part2 = particle_handler.new_particle(
 			player.x*const.TILE_GRID_SIZE+12,
@@ -132,7 +148,7 @@ function handle_player_particle()
 			0,
 			20,
 			helpers.random_element_from({19}),
-			1
+			particle_handler.PARTICLE_TYPE.DOT
 		)
 	table.insert(particle_collection, part1)
 	table.insert(particle_collection, part2)

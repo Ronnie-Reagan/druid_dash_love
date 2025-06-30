@@ -1,5 +1,10 @@
-local particle_handler = {}
+local particle_handler = {
+    PARTICLE_TYPE = {
+        DOT = 1, RECTANGLE = 2, CIRCLE = 3
+    }
+}
 local color_handler = require "src.utils.color"
+
 
 function particle_handler.new_particle(x, y, sx, sy, lifetime, color, type)
     local particle = {
@@ -9,7 +14,7 @@ function particle_handler.new_particle(x, y, sx, sy, lifetime, color, type)
         sy = sy,
         lifetime = lifetime,
         color = color,
-        type = type or 1
+        type = type or particle_handler.PARTICLE_TYPE.DOT
     }
 
     function particle:update(dt)
@@ -19,9 +24,11 @@ function particle_handler.new_particle(x, y, sx, sy, lifetime, color, type)
     end
 
     function particle:draw()
-        color_handler.set(color)
-        love.graphics.rectangle("fill", self.x, self.y, 2, 2)
-        color_handler.reset()
+        if self.type == particle_handler.PARTICLE_TYPE.DOT then
+            color_handler.set(color)
+            love.graphics.rectangle("fill", self.x, self.y, 2, 2)
+            color_handler.reset()
+        end
     end
 
     return particle

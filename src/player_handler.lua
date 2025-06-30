@@ -35,7 +35,10 @@ function Player.new(id, x, y)
                 self.y = self.y + 1
             end
           end
-      end
+          if key == "q" then
+            love.event.push("quit", "restart", nil)
+          end
+        end
 
       local x = self.x
       local y = self.y
@@ -51,6 +54,13 @@ function Player.new(id, x, y)
           ) then
         self.x = x
         self.y = y
+        if new_tile == const.ACTIVE_PORTAL_TILE then
+          print("active_portal")
+          _G.map_index = _G.map_index + 1
+          load_map(map_index)
+        end
+
+
       else
         self.direction = const.DIRECTION.NONE
       end
