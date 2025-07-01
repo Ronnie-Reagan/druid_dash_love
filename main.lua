@@ -55,7 +55,7 @@ function love.update(dt)
 						mush.x * const.TILE_GRID_SIZE + const.TILE_GRID_SIZE/2,
 						mush.y * const.TILE_GRID_SIZE,
 						math.random() * helpers.random_element_from({-0.5,0.5}),
-						-math.random(2),
+						-math.random()*2,
 						math.random(10) + 20,
 						helpers.random_element_from({color.PICO_RED, color.PICO_WHITE, color.PICO_LIGHT_PEACH}),
 						particle_handler.PARTICLE_TYPE.DOT

@@ -26,7 +26,7 @@ function particle_handler.new_particle(x, y, sx, sy, lifetime, color, type)
     function particle:draw()
         if self.type == particle_handler.PARTICLE_TYPE.DOT then
             color_handler.set(color)
-            love.graphics.rectangle("fill", self.x, self.y, 2, 2)
+            love.graphics.rectangle("fill", self.x, self.y, 1, 1)
             color_handler.reset()
         end
     end
