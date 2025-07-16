@@ -13,6 +13,8 @@ function loadTileMap(path)
         const.MAPFILE_PATH..tileset.image
     )
     map.tileset = tileset
+    map.pixel_width = map.width * tileset.tilewidth
+    map.pixel_height = map.height * tileset.tileheight
     -- whole width of our tileset
 
     for y = 0, (tileset.imageheight/tileset.tileheight) - 1 do
@@ -60,8 +62,8 @@ function loadTileMap(path)
                         love.graphics.draw(
                             self.image,
                             quad,
-                            math.floor(drawx),
-                            math.floor(drawy)
+                            math.floor(drawx + 0.5),
+                            math.floor(drawy + 0.5)
                         )
                     end
                 end
@@ -71,6 +73,9 @@ function loadTileMap(path)
 
     function map:get_tile(x, y, layer)
         local work_layer = self.layers[layer or 1]
+        if x < 0 or y < 0 or x >= work_layer.width or y >= work_layer.height then
+            return nil
+        end
         local tile_index = (x + y * work_layer.width) + 1
         return work_layer.data[tile_index]
     end

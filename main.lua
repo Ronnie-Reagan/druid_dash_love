@@ -6,6 +6,7 @@ local const = require "src.utils.const"
 local player_hander = require "src.player_handler"
 local particle_handler = require "src.particle_handler"
 local helpers = require "src.utils.helpers"
+local currentWidth
 
 function love.load()
     math.randomseed(os.time())
@@ -13,21 +14,27 @@ function love.load()
     _G.font = love.graphics.newFont("assets/font/pico-mono.ttf")
     _G.font:setFilter("linear", "nearest")
 
-    -- does this have a purpose?
-    -- window = {translateX = 40, translateY = 40, scale = 0.5, width = 1920, height = 1080}
-
-    -- getting the desktop window size and setting the game window to that size * 0.9
-    desktopWidth, desktopHeight = love.window.getDesktopDimensions()
-    defaultWindowWidth, defaultWindowHeight = desktopWidth * 0.9, desktopHeight * 0.9
-    love.window.setMode(defaultWindowWidth, defaultWindowHeight, {
-        resizable = false,
-        borderless = false,
-        fullscreen = true
-    })
-
     _G.mushrooms = {}
     _G.map = loadTileMap(const.TILEMAP_1_PATH)
     _G.map:pre_proces()
+
+    local desktopWidth, desktopHeight = love.window.getDesktopDimensions()
+    local maxScale = math.floor(math.min(
+        (desktopWidth * 0.9) / _G.map.pixel_width,
+        (desktopHeight * 0.9) / _G.map.pixel_height
+    ))
+    _G.scale = math.max(1, maxScale)
+    local scaledWidth = _G.map.pixel_width * _G.scale
+    local scaledHeight = _G.map.pixel_height * _G.scale
+
+    love.window.setMode(scaledWidth, scaledHeight, {
+        resizable = true,
+        borderless = false,
+        fullscreen = false
+    })
+
+    currentWidth = scaledWidth
+    currentHeight = scaledHeight
 
     love.keyboard.setKeyRepeat(true)
 
@@ -36,14 +43,32 @@ function love.load()
 
     mushroom_collection = {}
     particle_collection = {}
-    local randsx = math.random()
-    local randsy = math.random()
     player = player_hander.new(1, 1, 1)
 end
+
+
+function love.resize(w, h)
+    local newScale = math.max(1, math.floor(math.min(
+        w / _G.map.pixel_width,
+        h / _G.map.pixel_height
+    )))
+    _G.scale = newScale
+
+    -- Snap window to nearest valid integer scale of map
+    local scaledWidth = _G.map.pixel_width * _G.scale
+    local scaledHeight = _G.map.pixel_height * _G.scale
+    love.window.setMode(scaledWidth, scaledHeight, { resizable = true })
+
+    currentWidth = math.max(scaledWidth, w - 400)
+	print(currentWidth)
+    currentHeight = scaledHeight
+end
+
 
 -- table to store mushrooms marked for removal (avoids modifying the class itself)
 local mushToRemove = {}
 local bounceBack = false -- bool for if should reverse directional movement due to off map bug
+
 
 function love.update(dt)
     accumulator = accumulator + dt
@@ -93,7 +118,7 @@ end
 
 function love.draw()
     love.graphics.setFont(_G.font)
-    love.graphics.scale(4, 4)
+    love.graphics.scale(_G.scale, _G.scale)
 
     -- drawing the map
     _G.map:draw()
@@ -109,17 +134,9 @@ function love.draw()
         m:draw()
     end
 
-    -- drawing the random text
-    color.set(1)
-    love.graphics.print(player.x .. " " .. player.y, 0, 0)
-    -- [BUG] The player is allowed to leave the world, resulting in nil value references (arg 1 expected string, got nil)
-	-- [FIX] If not tile then dont print (duct tape patch, not fixing off map issues)
-	local tile = _G.map:get_tile(player.x, player.y, 1)
-    if not tile then
-		bounceBack = true
-	else
-    	love.graphics.print(tile, 2, 16)
-	end
+    -- drawing the pos
+    color.set(8)
+    love.graphics.printf(string.format("X: %d Y: %d", player.x, player.y), currentWidth - 200, 5, 200, "right")
     color.reset()
 end
 
