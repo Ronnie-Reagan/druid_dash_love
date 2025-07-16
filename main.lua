@@ -41,7 +41,7 @@ function love.load()
     player = player_hander.new(1, 1, 1)
 end
 
--- local declaration
+-- table to store mushrooms marked for removal (avoids modifying the class itself)
 local mushToRemove = {}
 local bounceBack = false -- bool for if should reverse directional movement due to off map bug
 
@@ -113,14 +113,15 @@ function love.draw()
     color.set(1)
     love.graphics.print(player.x .. " " .. player.y, 0, 0)
     -- [BUG] The player is allowed to leave the world, resulting in nil value references (arg 1 expected string, got nil)
-    if not _G.map:get_tile(player.x, player.y, 1) then
+	-- [FIX] If not tile then dont print
+	local tile = _G.map:get_tile(player.x, player.y, 1)
+    if not tile then
 		bounceBack = true
-        color.reset()
         return
-    end
-    love.graphics.print(_G.map:get_tile(player.x, player.y, 1), 2, 16)
+	else
+    	love.graphics.print(tile, 2, 16)
+	end
     color.reset()
-
 end
 
 function handle_player_particle()

@@ -47,9 +47,12 @@ function Player.new(id, x, y)
             y = y + const.DIRECTION_TABLE[self.direction][2]
             -- check if we can step on a tile
             local new_tile = _G.map:get_tile(x, y, 1)
-            debugger.print(_G.map:get_tile(x, y, 1))
-            if ((not helpers.is_value_in_set(new_tile, const.WALL_TILES)) and
-                (not helpers.is_value_in_set(new_tile, const.WATER_TILES))) and not _G.map:get_tile(x, y, 1) ~= nil then
+            if new_tile ~= nil then
+                debugger.print(new_tile) -- this shouldnt be called
+            end
+            if new_tile ~= nil and
+                not helpers.is_value_in_set(new_tile, const.WALL_TILES) and
+                not helpers.is_value_in_set(new_tile, const.WATER_TILES) then
                 debugger.print(string.format("moving from X:%d, Y:%d, to X:%d, Y:%d", self.x, self.y, x, y))
                 self.x = x
                 self.y = y
