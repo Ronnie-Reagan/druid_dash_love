@@ -72,9 +72,9 @@ color.PICO_ALT_DARK_PEACH   = color.palette[31]
 color.PICO_ALT_PEACH        = color.palette[32]
 color.BABY_BLUE             = color.palette[33]
 
-
+-- we dont use 0 based indexing in lua.... why did you use index+1 in the assignment?
 function color.set(color_index, alpha)
-    local color_to_use = type(color_index) == "number" and color.palette[color_index + 1] or color_index
+    local color_to_use = type(color_index) == "number" and color.palette[color_index] or color_index
     love.graphics.setColor(
         color_to_use[1] / 255,
         color_to_use[2] / 255,

@@ -1,14 +1,15 @@
-io.stdout:setvbuf('no')
-
-require "src.map.tilemap"
+local map = require "src.map.tilemap"
 local color = require "src.utils.color"
 local const = require "src.utils.const"
-local player_hander = require "src.player_handler"
+local player_handler = require "src.player_handler"
 local particle_handler = require "src.particle_handler"
 local helpers = require "src.utils.helpers"
-local currentWidth
+local currentWidth, currentHeight
 
 function love.load()
+    local iconData = love.image.newImageData("assets/sprites/player/dd_player.png")
+    love.window.setTitle("Tilemap Learning")
+    love.window.setIcon(iconData)
     math.randomseed(os.time())
     love.graphics.setDefaultFilter('nearest', 'nearest', 1)
     _G.font = love.graphics.newFont("assets/font/pico-mono.ttf")
@@ -30,7 +31,6 @@ function love.load()
         borderless = false,
         fullscreen = false
     })
-
     currentWidth = scaledWidth
     currentHeight = scaledHeight
 
@@ -41,7 +41,7 @@ function love.load()
 
     mushroom_collection = {}
     particle_collection = {}
-    player = player_hander.new(1, 1, 1)
+    player = player_handler.new(1, 1, 1)
 end
 
 function love.resize(w, h)
@@ -56,13 +56,11 @@ function love.resize(w, h)
     })
 
     currentWidth = math.max(scaledWidth, w - 400)
-    print(currentWidth)
     currentHeight = scaledHeight
 end
 
 -- table to store mushrooms marked for removal (avoids modifying the class itself)
 local mushToRemove = {}
-local bounceBack = false -- bool for if should reverse directional movement due to off map bug
 
 function love.update(dt)
     accumulator = accumulator + dt
@@ -122,7 +120,7 @@ function love.draw()
     end
 
     -- drawing the pos
-    color.set(8) -- selected 8 for white, got red (9) instead
+    color.set(8)
     local coordText = string.format("X:%d Y:%d", player.x, player.y)
     local textWidth = _G.font:getWidth(coordText)
     love.graphics.print(coordText, (_G.map.pixel_width - textWidth), 5)
@@ -141,17 +139,17 @@ function handle_player_particle()
                                                    math.random() *
                                                        (particle_direction_y > 0 and particle_direction_y or
                                                            -math.random()), 10,
-                                                   helpers.random_element_from({4, 5, 19, 20, 27}), 1)
+                                                   helpers.random_element_from({5, 6, 20, 21, 28}), 1)
         table.insert(particle_collection, part)
     end
 
     -- add "footprints"
     local part1 = particle_handler.new_particle(player.x * const.TILE_GRID_SIZE + 4,
                                                 player.y * const.TILE_GRID_SIZE + const.TILE_GRID_SIZE - 2, 0, 0, 20,
-                                                helpers.random_element_from({19}), 1)
+                                                helpers.random_element_from({20}), 1)
     local part2 = particle_handler.new_particle(player.x * const.TILE_GRID_SIZE + 12,
                                                 player.y * const.TILE_GRID_SIZE + const.TILE_GRID_SIZE - 4, 0, 0, 20,
-                                                helpers.random_element_from({19}), 1)
+                                                helpers.random_element_from({20}), 1)
     table.insert(particle_collection, part1)
     table.insert(particle_collection, part2)
 end
