@@ -2,21 +2,21 @@
 local Player = {}
 local const = require("src.utils.const")
 local helpers = require("src.utils.helpers")
-
+local debugger = require("debugger")
+debugger.active = true
 
 function Player.new(id, x, y)
     local self = {
-      id = id,
-      x = x,
-      y = y,
-      sprite = love.graphics.newImage("assets/sprites/player/dd_player.png"),
-      direction = const.DIRECTION.NONE
+        id = id,
+        x = x,
+        y = y,
+        sprite = love.graphics.newImage("assets/sprites/player/dd_player.png"),
+        direction = const.DIRECTION.NONE
     }
 
-    
-    function self:update(dt)
-        function love.keypressed(key) 
-          if self.direction == const.DIRECTION.NONE then
+    -- why was this being defined every update loop lol
+    function love.keypressed(key)
+        if self.direction == const.DIRECTION.NONE then
             if key == "a" then
                 self.direction = const.DIRECTION.LEFT
             elseif key == "d" then
@@ -34,32 +34,35 @@ function Player.new(id, x, y)
             elseif key == "down" then
                 self.y = self.y + 1
             end
-          end
-      end
+        end
+    end
 
-      local x = self.x
-      local y = self.y
-      if self.direction ~= const.DIRECTION.NONE then
-        x = x + const.DIRECTION_TABLE[self.direction][1]
-        y = y + const.DIRECTION_TABLE[self.direction][2]
+    function self:update(dt)
+        -- this is akin to creating a pointer in c++, it is not a unique variable.
+        local x = self.x
+        local y = self.y
+        if self.direction ~= const.DIRECTION.NONE then
 
-
-        -- check if we can step on a tile
-      local new_tile = _G.map:get_tile(x, y, 1)
-      if ((not helpers.is_value_in_set(new_tile, const.WALL_TILES)) and
-            (not helpers.is_value_in_set(new_tile, const.WATER_TILES))
-          ) then
-        self.x = x
-        self.y = y
-      else
-        self.direction = const.DIRECTION.NONE
-      end
-      end
+            x = x + const.DIRECTION_TABLE[self.direction][1]
+            y = y + const.DIRECTION_TABLE[self.direction][2]
+            -- check if we can step on a tile
+            local new_tile = _G.map:get_tile(x, y, 1)
+            debugger.print(_G.map:get_tile(x, y, 1))
+            if ((not helpers.is_value_in_set(new_tile, const.WALL_TILES)) and
+                (not helpers.is_value_in_set(new_tile, const.WATER_TILES))) and not _G.map:get_tile(x, y, 1) ~= nil then
+                debugger.print(string.format("moving from X:%d, Y:%d, to X:%d, Y:%d", self.x, self.y, x, y))
+                self.x = x
+                self.y = y
+            else
+                debugger.print(string.format("denied moving from X:%d, Y:%d, to X:%d, Y:%d", self.x, self.y, x, y))
+                self.direction = const.DIRECTION.NONE
+            end
+        end
     end
 
     function self:draw()
-       -- draw
-      love.graphics.draw(self.sprite, self.x*const.TILE_GRID_SIZE, self.y*const.TILE_GRID_SIZE)
+        -- draw
+        love.graphics.draw(self.sprite, self.x * const.TILE_GRID_SIZE, self.y * const.TILE_GRID_SIZE)
     end
 
     return self
