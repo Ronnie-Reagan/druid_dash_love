@@ -46,7 +46,7 @@ function Player.new(id, x, y)
             -- check if we can step on a tile
             local new_tile = _G.map:get_tile(x, y, 1)
             if new_tile ~= nil then
-                logger.log(new_tile) -- this shouldnt be called
+                logger.log("you are not in the world!, current tile reading: " .. new_tile) -- this shouldnt be called
             end
             if new_tile ~= nil and not helpers.is_value_in_set(new_tile, const.WALL_TILES) and
                 not helpers.is_value_in_set(new_tile, const.WATER_TILES) then
