@@ -38,7 +38,6 @@ function Player.new(id, x, y)
     end
 
     function self:update(dt)
-        -- this is akin to creating a pointer in c++, it is not a unique variable.
         local x = self.x
         local y = self.y
         if self.direction ~= const.DIRECTION.NONE then
