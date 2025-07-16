@@ -20,7 +20,7 @@ function particle_handler.new_particle(x, y, sx, sy, lifetime, color, type)
 
     function particle:draw()
         color_handler.set(color)
-        love.graphics.rectangle("fill", self.x, self.y, 2, 2)
+        love.graphics.rectangle("fill", math.floor(self.x + 0.5), math.floor(self.y + 0.5), 2, 2)
         color_handler.reset()
     end
 

@@ -19,10 +19,8 @@ function love.load()
     _G.map:pre_proces()
 
     local desktopWidth, desktopHeight = love.window.getDesktopDimensions()
-    local maxScale = math.floor(math.min(
-        (desktopWidth * 0.9) / _G.map.pixel_width,
-        (desktopHeight * 0.9) / _G.map.pixel_height
-    ))
+    local maxScale = math.floor(math.min((desktopWidth * 0.9) / _G.map.pixel_width,
+                                         (desktopHeight * 0.9) / _G.map.pixel_height))
     _G.scale = math.max(1, maxScale)
     local scaledWidth = _G.map.pixel_width * _G.scale
     local scaledHeight = _G.map.pixel_height * _G.scale
@@ -46,29 +44,25 @@ function love.load()
     player = player_hander.new(1, 1, 1)
 end
 
-
 function love.resize(w, h)
-    local newScale = math.max(1, math.floor(math.min(
-        w / _G.map.pixel_width,
-        h / _G.map.pixel_height
-    )))
+    local newScale = math.max(1, math.floor(math.min(w / _G.map.pixel_width, h / _G.map.pixel_height)))
     _G.scale = newScale
 
     -- Snap window to nearest valid integer scale of map
     local scaledWidth = _G.map.pixel_width * _G.scale
     local scaledHeight = _G.map.pixel_height * _G.scale
-    love.window.setMode(scaledWidth, scaledHeight, { resizable = true })
+    love.window.setMode(scaledWidth, scaledHeight, {
+        resizable = true
+    })
 
     currentWidth = math.max(scaledWidth, w - 400)
-	print(currentWidth)
+    print(currentWidth)
     currentHeight = scaledHeight
 end
-
 
 -- table to store mushrooms marked for removal (avoids modifying the class itself)
 local mushToRemove = {}
 local bounceBack = false -- bool for if should reverse directional movement due to off map bug
-
 
 function love.update(dt)
     accumulator = accumulator + dt
@@ -80,21 +74,14 @@ function love.update(dt)
             handle_player_particle()
         end
 
-        -- print("asd") -- commented out deu to cost of printing every frame
-
-        -- this clears the old table values
         mushToRemove = {}
 
         for i = #_G.mushrooms, 1, -1 do
             local mush = _G.mushrooms[i]
             mush:update(dt)
-            -- print(player.x.." "..player.y)	-- commented out sue to high cost of printing every frame
-            -- print(mush.x.." "..mush.y)	-- commented out sue to high cost of printing every frame
-            if player.x == mush.x and player.y == mush.y then
-                -- this is naive, simply removing the mushroom gives chance for improper referencing
-                -- table.remove(_G.mushrooms, i)
 
-                -- better method is to mark for removal at end of frame
+            -- removing mushrooms in contact with the player
+            if player.x == mush.x and player.y == mush.y then
                 table.insert(mushToRemove, i)
             end
         end
@@ -135,8 +122,10 @@ function love.draw()
     end
 
     -- drawing the pos
-    color.set(8)
-    love.graphics.printf(string.format("X: %d Y: %d", player.x, player.y), currentWidth - 200, 5, 200, "right")
+    color.set(8) -- selected 8 for white, got red (9) instead
+    local coordText = string.format("X:%d Y:%d", player.x, player.y)
+    local textWidth = _G.font:getWidth(coordText)
+    love.graphics.print(coordText, (_G.map.pixel_width - textWidth), 5)
     color.reset()
 end
 

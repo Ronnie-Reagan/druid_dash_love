@@ -48,8 +48,7 @@ function Player.new(id, x, y)
             if new_tile ~= nil then
                 logger.log(new_tile) -- this shouldnt be called
             end
-            if new_tile ~= nil and
-                not helpers.is_value_in_set(new_tile, const.WALL_TILES) and
+            if new_tile ~= nil and not helpers.is_value_in_set(new_tile, const.WALL_TILES) and
                 not helpers.is_value_in_set(new_tile, const.WATER_TILES) then
                 logger.log(string.format("moving from X:%d, Y:%d, to X:%d, Y:%d", self.x, self.y, x, y))
                 self.x = x
@@ -63,11 +62,8 @@ function Player.new(id, x, y)
 
     function self:draw()
         -- draw
-        love.graphics.draw(
-            self.sprite,
-            math.floor(self.x * const.TILE_GRID_SIZE + 0.5),
-            math.floor(self.y * const.TILE_GRID_SIZE + 0.5)
-        )
+        love.graphics.draw(self.sprite, math.floor(self.x * const.TILE_GRID_SIZE + 0.5),
+                           math.floor(self.y * const.TILE_GRID_SIZE + 0.5))
     end
 
     return self

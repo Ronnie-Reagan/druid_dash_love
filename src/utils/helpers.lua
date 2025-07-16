@@ -1,7 +1,7 @@
 local helpers = {}
 
 function helpers.is_value_in_set(value, set)
-    for _,element in ipairs(set) do
+    for _, element in ipairs(set) do
         if value == element then
             return true
         end
