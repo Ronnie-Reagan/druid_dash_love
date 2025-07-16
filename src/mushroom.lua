@@ -12,7 +12,7 @@ function Mushroom.new(x, y)
     }
     self.animtimer = self.animspeed
     
-    function self:update(dt)
+    function self:update()
         self.animspeed = self.animspeed - 1
         if self.animspeed <= 0 then
             self.animspeed = self.animtimer

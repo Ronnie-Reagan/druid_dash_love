@@ -62,7 +62,7 @@ function love.update(dt)
 
         for i = #_G.mushrooms, 1, -1 do
             local mush = _G.mushrooms[i]
-            mush:update()
+            mush:update(dt)
             -- print(player.x.." "..player.y)	-- commented out sue to high cost of printing every frame
             -- print(mush.x.." "..mush.y)	-- commented out sue to high cost of printing every frame
             if player.x == mush.x and player.y == mush.y then
@@ -113,11 +113,10 @@ function love.draw()
     color.set(1)
     love.graphics.print(player.x .. " " .. player.y, 0, 0)
     -- [BUG] The player is allowed to leave the world, resulting in nil value references (arg 1 expected string, got nil)
-	-- [FIX] If not tile then dont print
+	-- [FIX] If not tile then dont print (duct tape patch, not fixing off map issues)
 	local tile = _G.map:get_tile(player.x, player.y, 1)
     if not tile then
 		bounceBack = true
-        return
 	else
     	love.graphics.print(tile, 2, 16)
 	end
